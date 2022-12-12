@@ -26,14 +26,44 @@ describe('Form participant', () => {
     const input = screen.getByPlaceholderText('Insira os nomes dos participantes')
     const button = screen.getByRole('button')
 
-    fireEvent.change(input, { 
-      target: { 
+    fireEvent.change(input, {
+      target: {
         value: 'John Doe'
-      } 
+      }
     })
 
     fireEvent.click(button)
     expect(input).toHaveFocus()
     expect(input).toHaveValue('')
+  })
+
+  test('should not add participant duplicated to list', () => {
+    render(
+      <RecoilRoot>
+        <Form />
+      </RecoilRoot>
+    )
+    
+    const input = screen.getByPlaceholderText('Insira os nomes dos participantes')
+    const button = screen.getByRole('button')
+
+    fireEvent.change(input, {
+      target: {
+        value: 'John Doe'
+      }
+    })
+
+    fireEvent.click(button)
+    
+    fireEvent.change(input, {
+      target: {
+        value: 'John Doe'
+      }
+    })
+
+    fireEvent.click(button)
+
+    const messageError = screen.getByRole('alert')
+    expect(messageError.textContent).toBe('Nomes duplicados não são permitidos!')
   })
 })
